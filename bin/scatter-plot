@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+require 'trollop'
+
+DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
+PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
+
+# TODO I do want to be streamed!
+input = `cat`
+File.open(DATA_FILE_NAME, "w"){|f| f.write(input)}
+
+
+@opts = Trollop::options do
+    opt :outfile, "Output file name", :type => String, :short => 'o'
+    opt :legends, "Legend for columns, pipe separated list", :type => String, :short => 'l'
+    opt :numc, "Number of data columns", :type => Integer, :short => 'c'
+    opt :debug, "debug"
+    opt :title, "Title", :type=> String, :short => 't'
+end
+
+title = @opts[:title] || ""
+
+
+numc_input=input.split(/\n/)[0].split(/\w*/).length - 1
+
+numc = @opts[:numc] || numc_input
+
+
+legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).map{|x| ""}).map{|x| x.strip}
+
+font = "Futura"
+font_size = "12"
+
+using_list = legends.zip(2..100).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\"" }.join(", ")
+
+
+
+if (@opts[:outfile])
+    filename = @opts[:outfile]
+    extension = filename.gsub(/[^.]*\./,"")
+    if (extension == "png")
+        terminal=<<EOF
+            set term pngcairo font '#{font},#{font_size}' transparent size 1200,800
+            set output '#{filename}'
+
+EOF
+    elsif (extension == "eps")
+        terminal=<<EOF
+            set term epscairo font '#{font},#{font_size}'
+            set output '#{filename}'
+EOF
+    elsif (extension == "pdf")
+        terminal=<<EOF
+            set term pdfcairo font '#{font},#{font_size}'
+            set output '#{filename}'
+EOF
+    else
+        throw "Unknown output format '.#{extension}'."
+    end
+
+
+end
+
+script = <<EOF
+#{terminal}
+set key top left
+set title "#{title}"
+plot #{using_list}
+
+EOF
+
+
+puts "data file " + DATA_FILE_NAME
+puts "plot file " + PLOT_FILE_NAME
+
+
+
+File.open(PLOT_FILE_NAME, "w"){|f| f.write(script)}
+
+`gnuplot #{PLOT_FILE_NAME}`
