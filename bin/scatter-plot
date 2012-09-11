@@ -4,12 +4,9 @@ require 'trollop'
 DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
 PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
 
-# TODO I do want to be streamed!
-input = `cat`
-File.open(DATA_FILE_NAME, "w"){|f| f.write(input)}
-
 
 @opts = Trollop::options do
+    banner "scatter-plot takes whitespace separated tables from stdin and renders them using gnuplot"
     opt :outfile, "Output file name", :type => String, :short => 'o'
     opt :legends, "Legend for columns, pipe separated list", :type => String, :short => 'l'
     opt :numc, "Number of data columns", :type => Integer, :short => 'c'
@@ -19,6 +16,9 @@ end
 
 title = @opts[:title] || ""
 
+# TODO I do want to be streamed!
+input = `cat`
+File.open(DATA_FILE_NAME, "w"){|f| f.write(input)}
 
 numc_input=input.split(/\n/)[0].split(/\w*/).length - 1
 
