@@ -22,7 +22,7 @@ END
 
 This incantation will bring up the gnuplot gui with the following graph:
 
-![gui](/doc/gnuplot-gui.png)
+![gui](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/gnuplot-gui.png)
 
 
 
