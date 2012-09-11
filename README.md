@@ -3,6 +3,13 @@ visualisation-utils
 
 a collection of scripts for standard visualisation tasks
 
+Installing
+==========
+
+~~~ .bash
+gem install visualisation-utils
+~~~
+
 scatter-plot
 ============
 
