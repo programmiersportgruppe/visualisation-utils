@@ -12,6 +12,7 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     opt :numc, "Number of data columns", :type => Integer, :short => 'c'
     opt :debug, "debug"
     opt :title, "Title", :type=> String, :short => 't'
+    opt :font, "Font", :type => String, :short => 'f'
 end
 
 title = @opts[:title] || ""
@@ -27,7 +28,7 @@ numc = @opts[:numc] || numc_input
 
 legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).map{|x| ""}).map{|x| x.strip}
 
-font = "Futura"
+font = @opts[:font] || "Futura"
 font_size = "12"
 
 using_list = legends.zip(2..100).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\"" }.join(", ")
