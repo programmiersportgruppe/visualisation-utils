@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Overlaying to pictures and adding white background
+
+FOREGROUND=$1
+BACKGROUND=$2
+
+
+convert  $FOREGROUND $BACKGROUND  -gravity center  -compose DstOver -composite -background white -format png output.png
+convert  output.png  -background white -flatten -format png plot-signed.png
+
