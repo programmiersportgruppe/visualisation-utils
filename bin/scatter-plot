@@ -13,6 +13,7 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     opt :debug, "debug"
     opt :title, "Title", :type=> String, :short => 't'
     opt :font, "Font", :type => String, :short => 'f'
+    opt :time, "Time format for time series data, strftime expression", :type => String
 end
 
 title = @opts[:title] || ""
@@ -21,7 +22,8 @@ title = @opts[:title] || ""
 input = `cat`
 File.open(DATA_FILE_NAME, "w"){|f| f.write(input)}
 
-numc_input=input.split(/\n/)[0].split(/\w*/).length - 1
+numc_input=input.split(/\n/)[0].split(/\s+/).length - 1
+puts "Detected numc y-columns #{numc_input}"
 
 numc = @opts[:numc] || numc_input
 
@@ -30,8 +32,7 @@ legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).ma
 
 font = @opts[:font] || "Futura"
 font_size = "12"
-
-using_list = legends.zip(2..100).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\"" }.join(", ")
+using_list = legends.zip((2..100).to_a).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\"" }.join(", ")
 
 
 
@@ -61,10 +62,25 @@ EOF
 
 end
 
+if (@opts[:time])
+    timeExpr=@opts[:time]
+    time=<<EOF
+set xdata time
+set timefmt "#{timeExpr}"
+set format x "%H:%M"
+set autoscale x
+set offsets 1, 1, 1, 0
+EOF
+else
+    time=""
+end
+
+
 script = <<EOF
 #{terminal}
 set key top left
 set title "#{title}"
+#{time}
 plot #{using_list}
 
 EOF
