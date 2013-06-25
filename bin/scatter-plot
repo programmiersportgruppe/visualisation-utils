@@ -32,7 +32,7 @@ legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).ma
 
 font = @opts[:font] || "Futura"
 font_size = "12"
-using_list = legends.zip((2..100).to_a).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\"" }.join(", ")
+using_list = legends.zip((2..100).to_a).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with points ps 2.0 lw 2.0" }.join(", ")
 
 
 
@@ -69,7 +69,6 @@ set xdata time
 set timefmt "#{timeExpr}"
 set format x "%H:%M"
 set autoscale x
-set offsets 1, 1, 1, 0
 EOF
 else
     time=""
@@ -79,6 +78,7 @@ end
 script = <<EOF
 #{terminal}
 set key top left
+set offsets 1, 1, 1, 0
 set title "#{title}"
 #{time}
 plot #{using_list}
