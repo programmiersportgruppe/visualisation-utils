@@ -1,11 +1,16 @@
-#!/usr/bin/env bash
+#/usr/bin/env bash
 
 # Overlaying to pictures and adding white background
 
 FOREGROUND=$1
 BACKGROUND=$2
+set -e
+set -u
 
+basename="$(basename "$FOREGROUND")"
+SIGNED=`dirname "$FOREGROUND"`"/${basename%.*}.branded.png"
 
-convert  $FOREGROUND $BACKGROUND  -gravity center  -compose DstOver -composite -background white -format png output.png
-convert  output.png  -background white -flatten -format png plot-signed.png
+convert  "${FOREGROUND}" "${BACKGROUND}"  -gravity center  -compose DstOver -composite -background white -format png /tmp/output.png
+convert  /tmp/output.png  -background white -flatten -format png "$SIGNED"
+
 
