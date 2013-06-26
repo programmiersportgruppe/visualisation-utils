@@ -9,11 +9,14 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     banner "scatter-plot takes whitespace separated tables from stdin and renders them using gnuplot"
     opt :outfile, "Output file name", :type => String, :short => 'o'
     opt :legends, "Legend for columns, pipe separated list", :type => String, :short => 'l'
+    opt :axis_labels,  "Labels for axes, pipe separated list", :type => String
+    opt :axes,  "Axes used for the respective columns, e.g. (1|possible value are ", :type => String
     opt :numc, "Number of data columns", :type => Integer, :short => 'c'
     opt :debug, "debug"
     opt :title, "Title", :type=> String, :short => 't'
     opt :font, "Font", :type => String, :short => 'f'
     opt :time, "Time format for time series data, strftime expression", :type => String
+    opt :ranges, "A list comma separated pairs of gnuplot range-expressions, e.g. xrange [-10:10], yrange[0:40], y2range [0:1]", type:String
 end
 
 title = @opts[:title] || ""
@@ -25,14 +28,20 @@ File.open(DATA_FILE_NAME, "w"){|f| f.write(input)}
 numc_input=input.split(/\n/)[0].split(/\s+/).length - 1
 puts "Detected numc y-columns #{numc_input}"
 
+
 numc = @opts[:numc] || numc_input
 
+axis_labels = (@opts[:axis_labels] || " | ").split("|")
 
 legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).map{|x| ""}).map{|x| x.strip}
 
+axes = @opts[:axes] ? @opts[:axes].split("|") : [1] * legends.length
+
+ranges = @opts[:ranges] ? @opts[:ranges].split(",").map{ |r| "set #{r}"}.join("\n") : ""
+
 font = @opts[:font] || "Futura"
 font_size = "12"
-using_list = legends.zip((2..100).to_a).map{|text, index| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with points ps 2.0 lw 2.0" }.join(", ")
+using_list = legends.zip((2..100).to_a, axes).map{|text, index, yaxis| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with points ps 2.0 lw 2.0 axes x1y#{yaxis}"}.join(", ")
 
 
 
@@ -77,8 +86,18 @@ end
 
 script = <<EOF
 #{terminal}
+#{axis_labels.map{ | axis | pair=axis.split(":"); "set #{pair[0]}label '#{pair[1]}';"}.join("\n")}
 set key top left
-set offsets 1, 1, 1, 0
+#set offsets 1, 1, 1, 0
+set style line 11 lc rgb '#808080' lt 1
+set border 3 back ls 11
+set tics nomirror
+set style line 12 lc rgb '#808080' lt 0 lw 1
+set grid back ls 12
+set y2tics
+
+#{ranges}
+
 set title "#{title}"
 #{time}
 plot #{using_list}
