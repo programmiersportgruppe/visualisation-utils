@@ -56,12 +56,17 @@ if (@opts[:outfile])
 EOF
     elsif (extension == "eps")
         terminal=<<EOF
-            set term epscairo font '#{font},#{font_size}'
+            set term epscairo size 1200,800 font '#{font},#{font_size}'
             set output '#{filename}'
 EOF
     elsif (extension == "pdf")
         terminal=<<EOF
-            set term pdfcairo font '#{font},#{font_size}'
+            set term pdfcairo size 22cm,14cm font '#{font},#{font_size}'
+            set output '#{filename}'
+EOF
+    elsif (extension == "svg")
+        terminal=<<EOF
+            set term svg size 1200,800 font '#{font},#{font_size}'
             set output '#{filename}'
 EOF
     else
@@ -89,6 +94,8 @@ script = <<EOF
 #{axis_labels.map{ | axis | pair=axis.split(":"); "set #{pair[0]}label '#{pair[1]}';"}.join("\n")}
 set key top left
 #set offsets 1, 1, 1, 0
+set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red
+set style line 2 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2 # --- green
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
