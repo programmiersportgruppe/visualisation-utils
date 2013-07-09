@@ -92,7 +92,8 @@ end
 script = <<EOF
 #{terminal}
 #{axis_labels.map{ | axis | pair=axis.split(":"); "set #{pair[0]}label '#{pair[1]}';"}.join("\n")}
-set key top left
+set key outside
+set key left top
 #set offsets 1, 1, 1, 0
 set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2 # --- green
