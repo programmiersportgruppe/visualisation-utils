@@ -9,6 +9,7 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     banner "scatter-plot takes whitespace separated tables from stdin and renders them using gnuplot"
     opt :outfile, "Output file name", :type => String, :short => 'o'
     opt :legends, "Legend for columns, pipe separated list", :type => String, :short => 'l'
+    opt :plot_styles, "Style of plot, comma separated list, values as expected by gnuplot, e.g. lines, points, linespoints, defaults to points", :type => String
     opt :axis_labels,  "Labels for axes, pipe separated list", :type => String
     opt :axes,  "Axes used for the respective columns, e.g. (1|possible value are ", :type => String
     opt :numc, "Number of data columns", :type => Integer, :short => 'c'
@@ -17,6 +18,7 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     opt :font, "Font", :type => String, :short => 'f'
     opt :time, "Time format for time series data, strftime expression", :type => String
     opt :ranges, "A list comma separated pairs of gnuplot range-expressions, e.g. xrange [-10:10], yrange[0:40], y2range [0:1]", type:String
+    opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
 end
 
 title = @opts[:title] || ""
@@ -37,13 +39,15 @@ legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).ma
 
 axes = @opts[:axes] ? @opts[:axes].split("|") : [1] * legends.length
 
+plot_styles =  @opts[:plot_styles] ? @opts[:plot_styles].strip().split(/,/)  : [ "points" ] * legends.length
+
 ranges = @opts[:ranges] ? @opts[:ranges].split(",").map{ |r| "set #{r}"}.join("\n") : ""
 
 font = @opts[:font] || "Futura"
 font_size = "12"
-using_list = legends.zip((2..100).to_a, axes).map{|text, index, yaxis| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with points ps 2.0 lw 2.0 axes x1y#{yaxis}"}.join(", ")
+using_list = legends.zip((2..100).to_a, axes, plot_styles).map{|text, index, yaxis, plot_style| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with #{plot_style} ps 2.0 lw 2.0 axes x1y#{yaxis}"}.join(", ")
 
-
+extra_header = @opts[:extra_header] || ""
 
 if (@opts[:outfile])
     filename = @opts[:outfile]
@@ -103,6 +107,7 @@ set tics nomirror
 set style line 12 lc rgb '#808080' lt 0 lw 1
 set grid back ls 12
 set y2tics
+#{extra_header}
 
 #{ranges}
 
