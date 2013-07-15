@@ -45,7 +45,10 @@ ranges = @opts[:ranges] ? @opts[:ranges].split(",").map{ |r| "set #{r}"}.join("\
 
 font = @opts[:font] || "Futura"
 font_size = "12"
-using_list = legends.zip((2..100).to_a, axes, plot_styles).map{|text, index, yaxis, plot_style| "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with #{plot_style} ps 2.0 lw 2.0 axes x1y#{yaxis}"}.join(", ")
+using_list = legends.zip((2..100).to_a, axes, plot_styles).
+    map{|text, index, yaxis, plot_style|
+        "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with #{plot_style} ls #{index-1} axes x1y#{yaxis}"
+    }.join(", ")
 
 extra_header = @opts[:extra_header] || ""
 
@@ -99,8 +102,11 @@ script = <<EOF
 set key outside
 set key left top
 #set offsets 1, 1, 1, 0
-set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red
-set style line 2 lc rgb '#5e9c36' pt 6 ps 1 lt 1 lw 2 # --- green
+set style line 1 lc rgb '#cc0000' pt 4 ps 1 lt 1 lw 3 # --- red
+set style line 2 lc rgb '#4e9a06' pt 6 ps 1 lt 1 lw 3 # --- green
+set style line 3 lc rgb '#3465a4' pt 7 ps 1 lt 1 lw 3 # --- blue
+set style line 4 lc rgb '#f57900' pt 8 ps 1 lt 1 lw 3 # --- orange
+set style line 5 lc rgb '#edd400' pt 9 ps 1 lt 1 lw 3 # --- butter
 set style line 11 lc rgb '#808080' lt 1
 set border 3 back ls 11
 set tics nomirror
