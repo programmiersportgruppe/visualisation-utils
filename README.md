@@ -31,6 +31,31 @@ This incantation will bring up the gnuplot gui with the following graph:
 
 ![gui](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/gnuplot-gui.png)
 
+heat-map
+=====-==
+
+Prints a heat map visualising the distribution of
+geo coordinate samples.
+
+~~~ .bash
+cat | < | heat-map <<'END'
+38.6,-90.5
+38.6,-90.5
+40.5,-74.3
+34.4,-92.2
+42.5,-83.0
+34.1,-92.0
+33.3,-111.9
+34.1,-91.8
+34.2,-86.8
+END
+~~~
+
+This will render to the following visualisation:
+
+![map](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/heat-map.png)
+
+
 TODO
 ====
 
