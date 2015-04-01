@@ -14,7 +14,7 @@ scatter-plot
 ============
 
 Prints scatter plots of one or more columns of whitespace separated data using
-gnuplot as a backend
+gnuplot as a backend.
 
 
 ~~~ .bash
@@ -59,13 +59,13 @@ This will render to the following visualisation:
 TODO
 ====
 
-* Overriding of autoscale
-* Create nice PNGs
-* Line plots
-* Changing changing the size of the dots
-* Secondary y-axis
-* Bar chart single series
-* Bar chart multiple series
-* Discrete y-values, e.g. to visualise events over time
-* Histogram plotting
+[X] Overriding of autoscale
+[X] Create nice PNGs
+[X] Line plots
+[ ] Changing changing the size of the dots
+[X] Secondary y-axis
+[ ] Bar chart single series
+[ ] Bar chart multiple series
+[ ] Discrete y-values, e.g. to visualise events over time
+[ ] Histogram plotting
 
