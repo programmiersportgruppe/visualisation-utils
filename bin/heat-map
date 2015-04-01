@@ -116,7 +116,6 @@ plot '#{DATA_FILE_NAME}' u 2:1:3 w image, \
      '#{world_dat}' with lines linestyle 1
 EOF
 
-
 puts "data file " + DATA_FILE_NAME
 puts "plot file " + PLOT_FILE_NAME
 
@@ -124,5 +123,6 @@ puts "plot file " + PLOT_FILE_NAME
 
 File.open(PLOT_FILE_NAME, "w"){|f| f.write(script)}
 
-`gnuplot #{PLOT_FILE_NAME}`
+persistent_opt = @opts[:outfile]?"":"-p"
 
+`gnuplot #{persistent_opt} #{PLOT_FILE_NAME}`

@@ -89,6 +89,7 @@ EOF
 
 end
 
+
 if (@opts[:time])
     timeExpr=@opts[:time]
     time=<<EOF
@@ -137,4 +138,6 @@ puts "plot file " + PLOT_FILE_NAME
 
 File.open(PLOT_FILE_NAME, "w"){|f| f.write(script)}
 
-`gnuplot #{PLOT_FILE_NAME}`
+persistent_opt = @opts[:outfile]?"":"-p"
+
+`gnuplot #{persistent_opt} #{PLOT_FILE_NAME}`
