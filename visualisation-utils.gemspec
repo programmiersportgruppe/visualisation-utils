@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.summary      = 'utilities for quick visualisation'
   s.description  = 'visualisation-utils provides a number of utilities
                     for visualising data from the command line.'
-  s.version      = '0.5'
+  s.version      = '0.6'
   s.platform     = Gem::Platform::RUBY
 
   s.files        = ['bin/scatter-plot']
