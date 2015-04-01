@@ -59,13 +59,13 @@ This will render to the following visualisation:
 TODO
 ====
 
-[X] Overriding of autoscale
-[X] Create nice PNGs
-[X] Line plots
-[ ] Changing changing the size of the dots
-[X] Secondary y-axis
-[ ] Bar chart single series
-[ ] Bar chart multiple series
-[ ] Discrete y-values, e.g. to visualise events over time
-[ ] Histogram plotting
+- [X] Overriding of autoscale
+- [X] Create nice PNGs
+- [X] Line plots
+- [ ] Changing changing the size of the dots
+- [X] Secondary y-axis
+- [ ] Bar chart single series
+- [ ] Bar chart multiple series
+- [ ] Discrete y-values, e.g. to visualise events over time
+- [ ] Histogram plotting
 
