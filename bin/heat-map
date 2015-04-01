@@ -111,7 +111,7 @@ unset ytics
 set xrange[-179:179]
 set yrange[-89:89]
 #set format '%g'
-set palette defined (0 "#00000000",#{min_val} "#00ffff",#{mid_val} "yellow",#{max_val} "red")
+set palette defined (0 "white",#{min_val} "#00ffff",#{mid_val} "yellow",#{max_val} "red")
 plot '#{DATA_FILE_NAME}' u 2:1:3 w image, \
      '#{world_dat}' with lines linestyle 1
 EOF
