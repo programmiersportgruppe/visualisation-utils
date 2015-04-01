@@ -6,6 +6,16 @@ a collection of scripts for standard visualisation tasks
 Installing
 ==========
 
+`gnuplot` is required for these scripts to work.
+
+The installation depends on your platform, e.g. for Linux:
+
+~~~ .bash
+sudo apt-get install gnuplot
+~~~
+
+Then you can install the actual visualisation-utils gem:
+
 ~~~ .bash
 gem install visualisation-utils
 ~~~

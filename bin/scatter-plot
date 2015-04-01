@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'trollop'
+require 'mkmf'
 
 DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
 PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
@@ -22,6 +23,11 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
 end
 
 title = @opts[:title] || ""
+
+if (!find_executable 'gnuplot')
+    STDERR.puts("This utility depends on gnuplot. Please install gnuplot using your favourite package manager.")
+    exit(1)
+end
 
 # TODO I do want to be streamed!
 input = `cat`
