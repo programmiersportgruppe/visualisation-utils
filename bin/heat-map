@@ -47,7 +47,7 @@ puts "Min. value: #{min_val}, max value: #{max_val}"
 full_map = (-179..179).map{|lon|
    (-89..89).map{|lat|
        key = "#{lat},#{lon}"
-       "#{lat} #{lon} #{freqs[key]||0}"
+       "#{lat} #{lon} #{freqs[key]||"NaN"}"
    }
 }.join("\n")
 
