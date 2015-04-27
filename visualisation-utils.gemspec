@@ -1,23 +1,22 @@
-Gem::Specification.new do |s|
-  s.name         = 'visualisation-utils'
-  s.summary      = 'utilities for quick visualisation'
-  s.description  = 'visualisation-utils provides a number of utilities
-                    for visualising data from the command line.'
-  s.version      = '0.6'
-  s.platform     = Gem::Platform::RUBY
+# -*- encoding: utf-8 -*-
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'visualisation-utils/version'
 
-  s.files        = ['bin/scatter-plot']
+Gem::Specification.new do |gem|
+  gem.name          = "visualisation-utils"
+  gem.version       = Visualisation::Utils::VERSION
+  gem.authors       = ["Felix Leipold"]
+  gem.email         = [""]
+  gem.description   = %q{visualisation-utils provides a number of utilities
+                    for visualising data from the command line.}
+  gem.summary       = %q{utilities for quick visualisation}
+  gem.homepage      = "https://github.com/programmiersportgruppe/visualisation-utils"
 
-  s.bindir = 'bin'
+  gem.files         = `git ls-files`.split($/)
+  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths = ["lib"]
 
-  s.files         = `git ls-files`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-
-  s.author      = 'Felix Leipold'
-  s.email       = ''
-  s.homepage    = 'https://github.com/programmiersportgruppe/visualisation-utils'
-  s.license = 'MIT'
-
-  s.add_dependency('trollop')
+  gem.add_dependency('trollop')
 end
-
