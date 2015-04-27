@@ -8,6 +8,8 @@ module VisualisationUtils
             opt.opt :debug, "debug"
             opt.opt :title, "Title", :type => String, :short => 't'
             opt.opt :font, "Font", :type => String, :short => 'f'
+            opt.opt :font_size, "Font size", :type => String
+            opt.opt :dimensions, "Image dimensions", :type => String
             opt.opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
         end
     end
@@ -27,21 +29,23 @@ module VisualisationUtils
             end
 
             font = @opts[:font] || "Futura"
-            font_size = "12"
+            font_size = @opts[:font_size ] || "12"
 
             @extra_header = @opts[:extra_header] || ""
 
+            dimensions=@opts[:dimensions] || "1200,800"
+            
             if (@opts[:outfile])
                 filename = @opts[:outfile]
                 extension = filename.gsub(/[^.]*\./, "")
                 if (extension == "png")
                     @terminal=<<EOF
-            set term pngcairo font '#{font},#{font_size}' transparent size 1200,800
+            set term pngcairo font '#{font},#{font_size}' transparent size #{dimensions}
             set output '#{filename}'
 EOF
                 elsif (extension == "eps")
                     @terminal=<<EOF
-            set term epscairo size 1200,800 font '#{font},#{font_size}'
+            set term epscairo size #{dimensions} font '#{font},#{font_size}'
             set output '#{filename}'
 EOF
                 elsif (extension == "pdf")
@@ -51,7 +55,7 @@ EOF
 EOF
                 elsif (extension == "svg")
                     @terminal=<<EOF
-            set term svg size 1200,800 font '#{font},#{font_size}'
+            set term svg size #{dimensions} font '#{font},#{font_size}'
             set output '#{filename}'
 EOF
                 else
