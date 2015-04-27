@@ -1,29 +1,16 @@
 #!/usr/bin/env ruby
 require 'trollop'
-require 'mkmf'
+require 'visualisation-utils'
 
-DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
-PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
-
+parser = VisualisationUtils::BasicParser.new
 
 @opts = Trollop::options do
     banner "heat-map takes comma and newline separated table of coordinate from stdin and renders them using gnuplot"
-    opt :outfile, "Output file name", :type => String, :short => 'o'
-    opt :debug, "debug"
-    opt :title, "Title", :type=> String, :short => 't'
-    opt :font, "Font", :type => String, :short => 'f'
-    opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
+    parser.standard_opts(self)
 end
 
-title = @opts[:title] || ""
+gnu_plot_tool=VisualisationUtils::GnuPlotTool.new(@opts)
 
-if (!find_executable 'gnuplot')
-    STDERR.puts("This utility depends on gnuplot. Please install gnuplot using your favourite package manager.")
-    exit(1)
-end
-
-
-# TODO I do want to be streamed!
 input = `cat`
 
 freq_list = input.split("\n").map{|line|
@@ -42,7 +29,9 @@ max_val = freq_values.max
 min_val = freq_values.min
 mid_val = (min_val + (max_val - min_val)/2).round(1)
 
-puts "Min. value: #{min_val}, max value: #{max_val}"
+if (gnu_plot_tool.debug?)
+    puts "Min. value: #{min_val}, max value: #{max_val}"
+end
 
 full_map = (-179..179).map{|lon|
    (-89..89).map{|lat|
@@ -51,53 +40,16 @@ full_map = (-179..179).map{|lon|
    }
 }.join("\n")
 
-
+DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
 File.open(DATA_FILE_NAME, "w"){|f| f.write(full_map)}
-
-font = @opts[:font] || "Futura"
-font_size = "12"
-
-extra_header = @opts[:extra_header] || ""
-
-if (@opts[:outfile])
-    filename = @opts[:outfile]
-    extension = filename.gsub(/[^.]*\./,"")
-    if (extension == "png")
-        terminal=<<EOF
-            set term pngcairo font '#{font},#{font_size}' transparent size 1200,800
-            set output '#{filename}'
-
-EOF
-    elsif (extension == "eps")
-        terminal=<<EOF
-            set term epscairo size 1200,800 font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    elsif (extension == "pdf")
-        terminal=<<EOF
-            set term pdfcairo size 22cm,14cm font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    elsif (extension == "svg")
-        terminal=<<EOF
-            set term svg size 1200,800 font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    else
-        throw "Unknown output format '.#{extension}'."
-    end
-
-
+if (gnu_plot_tool.debug?)
+    STDERR.puts "data file " + DATA_FILE_NAME
 end
 
 
 world_dat=File.join(File.dirname(File.expand_path(__FILE__)), '/../world.dat')
 
-script = <<EOF
-
-#{terminal}
-set title "#{title}"
-
+gnu_plot_tool.plot(<<EOF
 # color definitions
 set border lw 1.5
 set style line 1 lc rgb 'black' lt 1 lw 2
@@ -115,14 +67,4 @@ set palette defined (0 "white",#{min_val} "#00ffff",#{mid_val} "yellow",#{max_va
 plot '#{DATA_FILE_NAME}' u 2:1:3 w image, \
      '#{world_dat}' with lines linestyle 1
 EOF
-
-puts "data file " + DATA_FILE_NAME
-puts "plot file " + PLOT_FILE_NAME
-
-
-
-File.open(PLOT_FILE_NAME, "w"){|f| f.write(script)}
-
-persistent_opt = @opts[:outfile]?"":"-p"
-
-`gnuplot #{persistent_opt} #{PLOT_FILE_NAME}`
+)

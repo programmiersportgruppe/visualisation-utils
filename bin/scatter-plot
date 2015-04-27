@@ -9,17 +9,17 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
 @opts = Trollop::options do
     banner "scatter-plot takes whitespace separated tables from stdin and renders them using gnuplot"
     opt :outfile, "Output file name", :type => String, :short => 'o'
-    opt :legends, "Legend for columns, pipe separated list", :type => String, :short => 'l'
-    opt :plot_styles, "Style of plot, comma separated list, values as expected by gnuplot, e.g. lines, points, linespoints, defaults to points", :type => String
-    opt :axis_labels,  "Labels for axes, pipe separated list", :type => String
-    opt :axes,  "Axes used for the respective columns, e.g. (1|possible value are ", :type => String
-    opt :numc, "Number of data columns", :type => Integer, :short => 'c'
     opt :debug, "debug"
     opt :title, "Title", :type=> String, :short => 't'
     opt :font, "Font", :type => String, :short => 'f'
-    opt :time, "Time format for time series data, strftime expression", :type => String
-    opt :ranges, "A list comma separated pairs of gnuplot range-expressions, e.g. xrange [-10:10], yrange[0:40], y2range [0:1]", type:String
     opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
+    opt :legends, "Legend for columns, comma-separated list", :type => String, :short => 'l'
+    opt :plot_styles, "Style of plot, comma-separated list, values as expected by gnuplot, e.g. lines, points, linespoints, defaults to points", :type => String
+    opt :axis_labels,  "Labels for axes, pipe-separated list", :type => String
+    opt :axes,  "Y-axes used for the respective columns, pipe-seprated list.", :type => String
+    opt :numc, "Number of data columns", :type => Integer, :short => 'c'
+    opt :time, "Time format for time series data, strftime expression", :type => String
+    opt :ranges, "A list of comma-separated pairs of gnuplot range-expressions, e.g. xrange [-10:10], yrange[0:40], y2range [0:1]", type:String
 end
 
 title = @opts[:title] || ""

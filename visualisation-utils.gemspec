@@ -5,7 +5,7 @@ require 'visualisation-utils/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "visualisation-utils"
-  gem.version       = Visualisation::Utils::VERSION
+  gem.version       = VisualisationUtils::VERSION
   gem.authors       = ["Felix Leipold"]
   gem.email         = [""]
   gem.description   = %q{visualisation-utils provides a number of utilities

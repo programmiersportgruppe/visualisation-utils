@@ -1,5 +1,3 @@
-module Visualisation
-  module Utils
-    VERSION = "0.7.0"
-  end
+module VisualisationUtils
+        VERSION = "0.7.0"
 end
