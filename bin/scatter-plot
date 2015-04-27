@@ -1,18 +1,16 @@
 #!/usr/bin/env ruby
 require 'trollop'
-require 'mkmf'
+require 'visualisation-utils'
+
+parser = VisualisationUtils::BasicParser.new
+
 
 DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
-PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
 
 
 @opts = Trollop::options do
     banner "scatter-plot takes whitespace separated tables from stdin and renders them using gnuplot"
-    opt :outfile, "Output file name", :type => String, :short => 'o'
-    opt :debug, "debug"
-    opt :title, "Title", :type=> String, :short => 't'
-    opt :font, "Font", :type => String, :short => 'f'
-    opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
+    parser.standard_opts(self)
     opt :legends, "Legend for columns, comma-separated list", :type => String, :short => 'l'
     opt :plot_styles, "Style of plot, comma-separated list, values as expected by gnuplot, e.g. lines, points, linespoints, defaults to points", :type => String
     opt :axis_labels,  "Labels for axes, pipe-separated list", :type => String
@@ -22,12 +20,7 @@ PLOT_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".plt"
     opt :ranges, "A list of comma-separated pairs of gnuplot range-expressions, e.g. xrange [-10:10], yrange[0:40], y2range [0:1]", type:String
 end
 
-title = @opts[:title] || ""
-
-if (!find_executable 'gnuplot')
-    STDERR.puts("This utility depends on gnuplot. Please install gnuplot using your favourite package manager.")
-    exit(1)
-end
+gnu_plot_tool=VisualisationUtils::GnuPlotTool.new(@opts)
 
 # TODO I do want to be streamed!
 input = `cat`
@@ -49,45 +42,10 @@ plot_styles =  @opts[:plot_styles] ? @opts[:plot_styles].strip().split(/,/)  : [
 
 ranges = @opts[:ranges] ? @opts[:ranges].split(",").map{ |r| "set #{r}"}.join("\n") : ""
 
-font = @opts[:font] || "Futura"
-font_size = "12"
 using_list = legends.zip((2..100).to_a, axes, plot_styles).
     map{|text, index, yaxis, plot_style|
         "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with #{plot_style} ls #{index-1} axes x1y#{yaxis}"
     }.join(", ")
-
-extra_header = @opts[:extra_header] || ""
-
-if (@opts[:outfile])
-    filename = @opts[:outfile]
-    extension = filename.gsub(/[^.]*\./,"")
-    if (extension == "png")
-        terminal=<<EOF
-            set term pngcairo font '#{font},#{font_size}' transparent size 1200,800
-            set output '#{filename}'
-
-EOF
-    elsif (extension == "eps")
-        terminal=<<EOF
-            set term epscairo size 1200,800 font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    elsif (extension == "pdf")
-        terminal=<<EOF
-            set term pdfcairo size 22cm,14cm font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    elsif (extension == "svg")
-        terminal=<<EOF
-            set term svg size 1200,800 font '#{font},#{font_size}'
-            set output '#{filename}'
-EOF
-    else
-        throw "Unknown output format '.#{extension}'."
-    end
-
-
-end
 
 
 if (@opts[:time])
@@ -103,8 +61,10 @@ else
 end
 
 
-script = <<EOF
-#{terminal}
+STDERR.puts "data file " + DATA_FILE_NAME
+
+
+gnu_plot_tool.plot(<<EOF
 #{axis_labels.map{ | axis | pair=axis.split(":"); "set #{pair[0]}label '#{pair[1]}';"}.join("\n")}
 set key outside
 set key left top
@@ -120,24 +80,11 @@ set tics nomirror
 set style line 12 lc rgb '#808080' lt 0 lw 1
 set grid back ls 12
 set y2tics
-#{extra_header}
 
 #{ranges}
 
-set title "#{title}"
 #{time}
 plot #{using_list}
-
 EOF
+)
 
-
-puts "data file " + DATA_FILE_NAME
-puts "plot file " + PLOT_FILE_NAME
-
-
-
-File.open(PLOT_FILE_NAME, "w"){|f| f.write(script)}
-
-persistent_opt = @opts[:outfile]?"":"-p"
-
-`gnuplot #{persistent_opt} #{PLOT_FILE_NAME}`

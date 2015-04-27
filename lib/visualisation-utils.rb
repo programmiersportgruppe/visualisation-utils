@@ -69,6 +69,9 @@ EOF
             full_script=<<EOF
 #{@terminal}
                 set title "#{@title}"
+
+                #{@extra_header}
+
                 #{script}
 EOF
 
