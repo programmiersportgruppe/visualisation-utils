@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+require 'trollop'
+require 'visualisation-utils'
+
+parser = VisualisationUtils::BasicParser.new
+
+
+DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
+
+
+@opts = Trollop::options do
+    banner "time-line takes whitespace separated tables of timestamps and events (names) from stdin and renders them using gnuplot"
+    parser.standard_opts(self)
+    opt :time, "Format for timestamp, strftime expression", :type => String
+end
+
+gnu_plot_tool=VisualisationUtils::GnuPlotTool.new(@opts)
+
+# TODO I do want to be streamed!
+input = `cat`
+lines = input.split("\n").map{|line| line.split(/\s+/)}
+
+values=lines.map{|line| line[1]}.uniq.sort.reverse
+coords=Hash[values.each_with_index.map { |x,i| [x, i] }]
+
+lines_with_y=lines.map{|line| line[0] + " " + coords[line[1]].to_s}
+
+File.open(DATA_FILE_NAME, "w"){|f| f.write(lines_with_y.join("\n"))}
+
+numc_input=input.split(/\n/)[0].split(/\s+/).length - 1
+
+if gnu_plot_tool.debug?
+    STDERR.puts "Detected numc y-columns #{numc_input}"
+end
+
+numc = numc_input
+
+if (numc != 1)
+    STDERR.puts("Expecting 2 cols of input, a timestamp and an event identifier.")
+    exit 1
+end
+
+axis_labels = (@opts[:axis_labels] || " | ").split("|")
+
+legends = (@opts[:legends] ? @opts[:legends].strip().split(/,/) : (1..(numc)).map{|x| ""}).map{|x| x.strip}
+
+axes = @opts[:axes] ? @opts[:axes].split("|") : [1] * legends.length
+
+plot_styles =  @opts[:plot_styles] ? @opts[:plot_styles].strip().split(/,/)  : [ "points" ] * legends.length
+
+using_list = legends.zip((2..100).to_a, axes, plot_styles).
+    map{|text, index, yaxis, plot_style|
+        "'#{DATA_FILE_NAME}' using 1:#{index} title \"#{text}\" with #{plot_style} ls #{index-1} axes x1y#{yaxis}"
+    }.join(", ")
+
+
+timeExpr=@opts[:time]||"%Y-%m-%dT%H:%M:%S"
+
+if gnu_plot_tool.debug?
+    STDERR.puts "data file " + DATA_FILE_NAME
+end
+
+gnu_plot_tool.plot(<<EOF
+#{axis_labels.map{ | axis | pair=axis.split(":"); "set #{pair[0]}label '#{pair[1]}';"}.join("\n")}
+#set key outside
+#set key left top
+#set offsets 1, 1, 1, 0
+set style line 1 lc rgb '#cc0000' pt 4 ps 1 lt 1 lw 3 # --- red
+set style line 2 lc rgb '#4e9a06' pt 6 ps 1 lt 1 lw 3 # --- green
+set style line 3 lc rgb '#3465a4' pt 7 ps 1 lt 1 lw 3 # --- blue
+set style line 4 lc rgb '#f57900' pt 8 ps 1 lt 1 lw 3 # --- orange
+set style line 5 lc rgb '#edd400' pt 9 ps 1 lt 1 lw 3 # --- butter
+set style line 11 lc rgb '#808080' lt 1
+set border 3 back ls 11
+set tics nomirror
+set style line 12 lc rgb '#808080' lt 0 lw 1
+set grid back ls 12
+
+set ytics (#{coords.map{|pair| '"' + pair[0].gsub("_", " ") + '"' + " " + pair[1].to_s}.join(", ") })
+
+set xdata time
+set timefmt "#{timeExpr}"
+set autoscale x
+
+plot #{using_list}
+EOF
+)
+
