@@ -10,6 +10,7 @@ module VisualisationUtils
             opt.opt :font, "Font", :type => String, :short => 'f'
             opt.opt :font_size, "Font size", :type => String
             opt.opt :dimensions, "Image dimensions", :type => String
+            opt.opt :transparent, "use transparent background"
             opt.opt :extra_header, "Extra commands to be put in the header of the gnuplot file", :type => String
         end
     end
@@ -40,7 +41,7 @@ module VisualisationUtils
                 extension = filename.gsub(/[^.]*\./, "")
                 if (extension == "png")
                     @terminal=<<EOF
-            set term pngcairo font '#{font},#{font_size}' transparent size #{dimensions}
+            set term pngcairo font '#{font},#{font_size}' #{@opts[:transparent]?"transparent":""} size #{dimensions}
             set output '#{filename}'
 EOF
                 elsif (extension == "eps")
