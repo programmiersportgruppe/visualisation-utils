@@ -4,9 +4,7 @@ require 'visualisation-utils'
 
 parser = VisualisationUtils::BasicParser.new
 
-
 DATA_FILE_NAME="/tmp/plot-"+`date  "+%s"`.strip+".dat"
-
 
 @opts = Trollop::options do
     banner "time-line takes whitespace separated tables of timestamps and events (names) from stdin and renders them using gnuplot"
@@ -21,7 +19,7 @@ input = `cat`
 lines = input.split("\n").map{|line| line.split(/\s+/)}
 
 values=lines.map{|line| line[1]}.uniq.sort.reverse
-coords=Hash[values.each_with_index.map { |x,i| [x, i] }]
+coords=Hash[values.each_with_index.map { |x,i| [x, i + 0.5] }]
 
 lines_with_y=lines.map{|line| line[0] + " " + coords[line[1]].to_s}
 
@@ -76,9 +74,14 @@ set tics nomirror
 set style line 12 lc rgb '#808080' lt 0 lw 1
 set grid back ls 12
 
+set yrange [0:#{values.length}]
+set lmargin 5
+set rmargin 5
+
 set ytics (#{coords.map{|pair| '"' + pair[0].gsub("_", " ") + '"' + " " + pair[1].to_s}.join(", ") })
 
 set xdata time
+set format x "%d %b %y"
 set timefmt "#{timeExpr}"
 set autoscale x
 
