@@ -115,6 +115,6 @@ TODO
 - [X] Secondary y-axis
 - [ ] Bar chart single series
 - [ ] Bar chart multiple series
-- [ ] Discrete y-values, e.g. to visualise events over time
+- [X] Discrete y-values, e.g. to visualise events over time
 - [ ] Histogram plotting
 
