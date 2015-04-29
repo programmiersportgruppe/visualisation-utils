@@ -41,6 +41,45 @@ This incantation will bring up the gnuplot gui with the following graph:
 
 ![gui](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/gnuplot-gui.png)
 
+time-line
+=========
+
+The `time-line` tool visualises events in a time-line.
+The data is expected in two columns, a timestamp and an
+event name. The default time format is `%Y-%m-%dT%H:%M:%S`.
+
+Here is a simple example:
+
+~~~~
+time-line  --font helvetica --dimensions 1300,600 -o time-line.png <<'END'
+2015-04-24T12:21:32 A
+2015-04-24T10:42:35 B
+2015-04-23T11:36:26 B
+2015-04-23T11:36:26 C
+2015-04-22T12:38:54 A
+2015-04-22T07:46:29 C
+2015-04-21T18:02:01 B
+2015-04-21T18:02:01 A
+2015-04-17T17:35:21 B
+2015-04-17T12:33:23 A
+2015-04-17T09:04:37 D
+2015-04-17T09:04:37 B
+2015-04-17T08:29:31 D
+2015-04-16T07:03:51 C
+2015-04-15T07:57:23 E
+2015-04-15T07:57:23 B
+2015-04-15T07:04:13 B
+2015-04-14T12:22:07 F
+2015-04-13T09:52:25 C
+END
+~~~~
+
+It yields the following graph:
+
+![](doc/time-line.png)
+
+
+
 heat-map
 ========
 
