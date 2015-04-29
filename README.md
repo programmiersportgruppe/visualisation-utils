@@ -28,7 +28,7 @@ gnuplot as a backend.
 
 
 ~~~ .bash
-scatter-plot <<'END'
+scatter-plot -o scatter-plot.png <<'END'
 1 1
 2 4
 3 9
@@ -37,9 +37,9 @@ scatter-plot <<'END'
 END
 ~~~
 
-This incantation will bring up the gnuplot gui with the following graph:
+It will produce the following image:
 
-![gui](doc/gnuplot-gui.png)
+![gui](doc/scatter-plot.png)
 
 time-line
 =========
