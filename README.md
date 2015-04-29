@@ -28,7 +28,7 @@ gnuplot as a backend.
 
 
 ~~~ .bash
-cat | scatter-plot <<'END'
+scatter-plot <<'END'
 1 1
 2 4
 3 9
@@ -89,7 +89,7 @@ Prints a heat map visualising the distribution of
 geo coordinate samples.
 
 ~~~ .bash
-cat | heat-map <<'END'
+heat-map -o heat-map.png <<'END'
 38.6,-90.5
 38.6,-90.5
 40.5,-74.3
