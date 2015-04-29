@@ -39,7 +39,7 @@ END
 
 This incantation will bring up the gnuplot gui with the following graph:
 
-![gui](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/gnuplot-gui.png)
+![gui](doc/gnuplot-gui.png)
 
 time-line
 =========
@@ -104,7 +104,7 @@ END
 
 This will render to the following visualisation:
 
-![map](https://raw.github.com/programmiersportgruppe/visualisation-utils/master/doc/heat-map.png)
+![map](doc/heat-map.png)
 
 
 TODO
