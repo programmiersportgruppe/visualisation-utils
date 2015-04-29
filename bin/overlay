@@ -12,5 +12,3 @@ SIGNED=`dirname "$FOREGROUND"`"/${basename%.*}.branded.png"
 
 convert  "${FOREGROUND}" "${BACKGROUND}"  -gravity center  -compose DstOver -composite -background white -format png /tmp/output.png
 convert  /tmp/output.png  -background white -flatten -format png "$SIGNED"
-
-

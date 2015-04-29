@@ -51,7 +51,9 @@ event name. The default time format is `%Y-%m-%dT%H:%M:%S`.
 Here is a simple example:
 
 ~~~~
-time-line  --font helvetica --dimensions 1300,600 -o time-line.png <<'END'
+time-line \
+    --dimensions 1300,600 \
+    -o time-line.png <<'END'
 2015-04-24T12:21:32 A
 2015-04-24T10:42:35 B
 2015-04-23T11:36:26 B

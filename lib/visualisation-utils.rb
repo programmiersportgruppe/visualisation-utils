@@ -29,13 +29,13 @@ module VisualisationUtils
                 exit(1)
             end
 
-            font = @opts[:font] || "Futura"
+            font = @opts[:font] || "Helvetica"
             font_size = @opts[:font_size ] || "12"
 
             @extra_header = @opts[:extra_header] || ""
 
             dimensions=@opts[:dimensions] || "1200,800"
-            
+
             if (@opts[:outfile])
                 filename = @opts[:outfile]
                 extension = filename.gsub(/[^.]*\./, "")
