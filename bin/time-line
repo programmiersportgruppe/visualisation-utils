@@ -75,7 +75,6 @@ set style line 12 lc rgb '#808080' lt 0 lw 1
 set grid back ls 12
 
 set yrange [0:#{values.length}]
-set lmargin 5
 set rmargin 5
 
 set ytics (#{coords.map{|pair| '"' + pair[0].gsub("_", " ") + '"' + " " + pair[1].to_s}.join(", ") })
