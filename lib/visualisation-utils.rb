@@ -24,7 +24,7 @@ module VisualisationUtils
             @opts = opts
             @debug = opts[:debug]
 
-            if (! system 'which -s gnuplot')
+            if (! system 'which gnuplot')
                 STDERR.puts("This utility depends on gnuplot. Please install gnuplot using your favourite package manager.")
                 exit(1)
             end
